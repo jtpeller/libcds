@@ -4,65 +4,67 @@ Thread safe, templated data structure library written in C++
 
 ## Overview
 
-Currently a work in progress, but aimed to work on my understanding of typical data structures, C++ libraries / headers, multi-threading, test suites, Makefiles, etc.
+Currently a work in progress, but aimed to work on my understanding of typical data structures, C++ libraries / headers / projects, DLL creation, multi-threading, test suites, Makefiles, CMake, cross-platform development, etc.
+
+The eventual goal is for this to be a lock-free, leak-free, and absolutely marvelous library for C++, complete with a solid cross-platform build system generator thanks to CMake. This is primarily a personal challenge, but it'll most certainly help me learn all those topics and more.
 
 ## Data Structures
 
-Data Structures implemented:
+Data Structures so far:
 
 - Linked List
+  - Unit Tested, verified 2025.07.07
 - Doubly Linked List
+  - Unit Tested, verified 2025.07.07
 
 Data Structures planned:
 
+- Array
 - Stack
 - Queue
 - Arraylist (like a vector)
 - Binary Trees
-- B+ Tree (like used in databases)
+- B+ Tree (like those used in databases)
+
+> Stack and Queue will probably be built on top of a Linked List, but potentially a simple List.
 
 ## Contents
 
-Structure for this library follows the [Canonical Project Structure](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1204r0.html).
+Structure now aims to follow the [Pitchfork](https://github.com/vector-of-bool/pitchfork) conventions as closely as possible.
 
-| Folder or File | Description |
-| -------------- | ----------- |
-| build | Contains all build files, including bin and obj. These are created upon compilation. |
-| libcds | contains all source files |
-| tests | contains function/integration tests. Currently empty. |
-| makefile | contains the recipe to create the program |
-| README.md | what you're reading |
+| Folders | Description |
+| :-----: | :---------- |
+| bin | Contains all "installed" executables and libraries. |
+| build | Where build systems should be built. |
+| cmake | CMake functions and utilities. |
+| docs | Documentation markdowns, installation, tutorials, etc. |
+| examples | Pending several things, this will include some example uses of the library. |
+| include | Contains public headers. |
+| src | Contains source code & private headers [currently empty] |
+| test | Holds all test code, like unit & stress tests. |
+
+TODO: where should `utils` go? `include` makes sense; perhaps just put utility stuff into `include/util`, then separate files based on usage?
 
 ## Compilation
 
-In order to compile this code, you have two methods: (1) using the Makefile or (2) using the `sh` scripts.
+There is already a CMake system in place to generate the build system.
 
-### Using Make
+I have confirmed it works with Win32 and x64 builds using Visual Studio 2022.
 
-To use the Makefile, open a terminal in the project root, and run make. It defaults to all.
+You can utilize the CMake GUI to get started now. Instructions, when complete, will be located in `/docs/build.md`
 
-```sh
-make
-```
+## Known Issues & To-Dos
 
-Other Make Labels are:
+Many issues have been fixed thus far, but some still remain...
 
-- `all`: Builds all preqrequisites: `build`, plus all data structures (currently implemented).
-- `build`: Creates all necessary build folders. (`./build`, `./build/bin`, and `./build/objs`)
-- `clean`: Cleans up created files, but not directories.
-- `full-clean`: Cleans up created files and directories.
-- `info`: Prints information about make variables.
-- `release`: Adds `-O2` to the CXXFLAGS, then all.
-- `test`: Adds `-DDEBUG -g` to the CXXFLAGS, then all.
+- Memory leaks need to be investigated in both the tests and library
+- Also, the library doesn't actually build anything (there is no `.lib` or `.dll` or anything).
+- Need to implement the INSTALL instructions so that the INSTALL project in VS2022 actually does something.
+  - This will likely just move something from the build folder to the corresponding bin folder.
 
-### Using Scripts
+Besides implementing the rest of the data structures, some additional features and functionality are pending...
 
-I have two scripts: (1) unittest.sh and (2) runtests.sh
-
-1. `unittest.sh`: Runs `make`, executes the files, then runs `make clean`.
-2. `runtests.sh`: Assumes `make` is already run and tries to execute the files. Does no cleanup either. Useful for repeated testing of the same binaries (e.g., to test race conditions).
-
-## Known Issues
-
-- Currently, object files are not created, so running `make` will result in compilation every time.
-- There seems to be a race condition (testThreadSafe is failing). This may be an implementation error in the test, or my mutex implementation is flawed.
+- Stress Tests, to be hosted inside `/test` as a means of really putting the data structures to the test.
+- To-String method, probably returning a `const char*` rather than `std::string`.
+- Docs need to be written, regarding how to include, usage, etc.
+- Lock-free (this one will be here for a long time).
